@@ -6,14 +6,14 @@ Acesse a aplicação [aqui](http://contasapponline-001-site1.ktempurl.com/Contas
 
 # Pré-requisitos
 
-Visual Studio 2022
-SQL Server
+- Visual Studio 2022
+- SQL Server
 
 # Configuração do Ambiente de Desenvolvimento
 
-1 Clone o repositorio para o ambiente local
-2 Abra o projeto no Visual Studio
-3 Verifique e atualize, se necessário, as configurações de conexão com o banco de dados no arquivo
-4 Abra o Package Maneger Console no Visual Studio (Tools -> Nuget Packages Maneger -> Packages Maneger Console)
-5 Execute o comando 'Updata-Database' no Package Manager Console para criar as tabelas do banco de dados com base nas migrações do Entity Framework
-6 Conpile e execute a aplicação
+1. Clone o repositório para o ambiente local.
+2. Abra o projeto no Visual Studio.
+3. Verifique e atualize, se necessário, as configurações de conexão com o banco de dados no arquivo `Web.config`.
+4. Abra o Package Manager Console no Visual Studio (Tools -> NuGet Package Manager -> Package Manager Console).
+5. Execute o comando `Update-Database` no Package Manager Console para criar as tabelas do banco de dados com base nas migrações do Entity Framework.
+6. Compile e execute a aplicação.
