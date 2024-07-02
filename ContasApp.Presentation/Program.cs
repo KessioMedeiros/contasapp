@@ -1,3 +1,4 @@
+using ContasApp.Presentation.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseMiddleware<CacheFilter>();
 
 app.UseCookiePolicy();
 
