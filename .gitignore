@@ -1,0 +1,79 @@
+# Arquivos temporários gerados pelo Visual Studio
+.vs/
+
+# Arquivos de compilação
+*.obj
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ipch
+*.ilk
+*.bak
+*.log
+*.dep
+*.tmp
+*.pyc
+*.pyo
+
+# Diretório de saída do MSBuild
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_tmp
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Arquivos de configuração do ReSharper
+_ReSharper*/
+
+# Pasta de resultados de compilação
+[Bb]in/
+[Oo]bj/
+
+# Arquivos de publicação gerados
+_PublishedWebsites/
+
+# Logs e outros arquivos gerados pelo IIS Express
+iislog.txt
+Logs/
+
+# Arquivos do NuGet
+packages/
+
+# Arquivos de usuário do Visual Studio
+*.user
+*.suo
+*.sln.docstates
+
+# Arquivos de cache do ReSharper
+*.resharper
+
+# Arquivos do Windows
+Thumbs.db
+Desktop.ini
+
+# Arquivos de projeto específicos
+*.csproj.user
+*.cache
+*.suo
+*.user
+*.userosscache
