@@ -60,7 +60,16 @@ namespace ContasApp.Presentation.Controllers
 
         public IActionResult Consulta()
         {
-            return View();
+
+            var model = new ContasConsultaViewModel();
+
+            //capturando o primeiro e ultimo dia do mes atual
+            var dataAtual = DateTime.Now;
+            model.DataInicio = new DateTime(dataAtual.Year, dataAtual.Month, 1);
+            model.DataFim = model.DataInicio?.AddMonths(1).AddDays(-1);
+
+            model = ConsultarContas(model);
+            return View(model);
         }
 
         [HttpPost]
@@ -68,43 +77,50 @@ namespace ContasApp.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var auth = JsonConvert.DeserializeObject<AuthViewModel>(User.Identity.Name);
-
-                    var contaRepository = new ContaRepository();
-                    var contas = contaRepository.GetAll(model.DataInicio, model.DataFim, auth.Id);
-
-                    if (contas.Count >0)
-                    {
-
-                        model.Resultado = new List<ContasConsultaResultadoViewModel>();
-                        foreach(var item in contas)
-                        {
-                            model.Resultado.Add(new ContasConsultaResultadoViewModel
-                            {
-                                Id = item.Id,
-                                Nome = item.Nome,
-                                Data = item.Data,
-                                Valor = item.Valor,
-                                Categoria = item.Categoria?.Nome,
-                                Tipo = item.Categoria?.Tipo.ToString(),
-                                observacoes = item.Observacoes
-                            });
-                        }
-                    }
-                    else
-                    {
-                        TempData["MensagemAlerta"] = "Nenhuma conta foi obtida para o período de datas selecionado.";
-                    }
-                }
-                catch(ArgumentException e)
-                {
-                    TempData["MesagemErro"] = e.Message;
-                }
+                model = ConsultarContas(model);
             }
 
             return View(model);
+        }
+
+        private ContasConsultaViewModel ConsultarContas(ContasConsultaViewModel model)
+        {
+            try
+            {
+                var auth = JsonConvert.DeserializeObject<AuthViewModel>(User.Identity.Name);
+
+                var contaRepository = new ContaRepository();
+                var contas = contaRepository.GetAll(model.DataInicio, model.DataFim, auth.Id);
+
+                if (contas.Count > 0)
+                {
+
+                    model.Resultado = new List<ContasConsultaResultadoViewModel>();
+                    foreach (var item in contas)
+                    {
+                        model.Resultado.Add(new ContasConsultaResultadoViewModel
+                        {
+                            Id = item.Id,
+                            Nome = item.Nome,
+                            Data = item.Data,
+                            Valor = item.Valor,
+                            Categoria = item.Categoria?.Nome,
+                            Tipo = item.Categoria?.Tipo.ToString(),
+                            observacoes = item.Observacoes
+                        });
+                    }
+                }
+                else
+                {
+                    TempData["MensagemAlerta"] = "Nenhuma conta foi obtida para o período de datas selecionado.";
+                }
+            }
+            catch (ArgumentException e)
+            {
+                TempData["MesagemErro"] = e.Message;
+            }
+
+            return model;
         }
 
         public IActionResult Edicao(Guid id)

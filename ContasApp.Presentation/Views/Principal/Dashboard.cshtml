@@ -2,7 +2,22 @@
 
 <div class="mb-3">
     <h5>Dashboard Principal</h5>
-    <p>Resumo financeiro do período de: <strong>DATA INICIO</strong> até <strong>DATA FIM</strong></p>
+    <hr/>
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <input type="date" id="dtInicio" class="form-control"/>
+        </div>
+
+        <div class="col-md-3">
+            <input type="date" id="dtFim" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <button id="btnConsulta" class="btn btn-success">
+                Filtrar Dados
+            </button>
+        </div>
+    </div>
 </div>
 <div class="row mb-2">
     <div class="col-md-6">
@@ -14,49 +29,125 @@
 </div>
 
 @section scripts {
+
+    <!--Biblioteca Jquery-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!--Bibliotecas Highcharts-->
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
-<script>
-    // Gráfico de Pizza
-    Highcharts.chart('chartPizza', {
-        chart: {
-            type: 'pie'
-        },
-        title: {
-            text: 'Exemplo de Gráfico de Pizza'
-        },
-        series: [{
-            name: 'Dados',
-            data: [
-                ['Categoria 1', 30],
-                ['Categoria 2', 20],
-                ['Categoria 3', 50]
-            ]
-        }]
-    });
+   
+    <script>
+        //Inicialiazando o Jquery
+        //Quando a pagina abrir faça..
+        $(document).ready(function(){
 
-    // Gráfico de Barras
-    Highcharts.chart('chartBarras', {
-        chart: {
-             type: 'bar'
-        },
-        title: {
-            text: 'Exemplo de Gráfico de Barras'
-        },
-        xAxis: {
-            categories: ['Categoria 1', 'Categoria 2', 'Categoria 3']
-        },
-        yAxis: {
-            title: {
-                text: 'Valores'
+            //preenchendo os campos com a data do primeiro e ultimo dias do mês atual
+            var dataAtual = new Date();
+            var primeiroDia = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 1);
+            var ultimoDia = new Date(dataAtual.getFullYear(), dataAtual.getMonth() + 1, 0);
+
+            //preenchendo os campos
+            $("#dtInicio").val(formatDate(primeiroDia));
+            $("#dtFim").val(formatDate(ultimoDia));
+            pesquisarContas();
+
+            
+
+            //quando o botao de consulta for clicado faça..
+            $("#btnConsulta").click(function() {
+                pesquisarContas();
+            });
+        });
+
+        function pesquisarContas(){
+
+            //Capturar o valor do campo 'dtInicio'
+            var dtInicio = $("#dtInicio").val();
+            var dtFim = $("#dtFim").val();
+
+            if (dtInicio != '' && dtFim != '') {
+
+                //enviando uma requisição para o controlador
+                $.ajax({
+                    type: "GET",
+                    url: "/Principal/ConsultarContas",
+                    data: {
+                        dtInicio,
+                        dtFim
+                    },
+                    success: function (data) { //capturando a resposta de sucesso
+
+                        var dadosChartPizza = [];
+                        for (var i = 0; i < data.totalTipos.length; i++) {
+                            var item = data.totalTipos[i];
+                            dadosChartPizza.push([item.tipo, item.total]);
+                        };
+
+                        var dadosChartBarrasX = [];
+                        var dadosChartBarrasY = [];
+                        for (var i = 0; i < data.totalDespesas.length; i++) {
+                            var item = data.totalDespesas[i];
+                            dadosChartBarrasX.push([item.nome]);
+                            dadosChartBarrasY.push([item.total]);
+                        };
+
+                        //Gráfico de Pizza
+                        Highcharts.chart('chartPizza', {
+                            chart: {
+                                type: 'pie'
+                            },
+                            title: {
+                                text: 'Total de Receitas e Despesas'
+                            },
+                            series: [{
+                                name: 'Dados',
+                                data: dadosChartPizza
+                            }]
+                        });
+
+                        //Gráfico de barras
+                        Highcharts.chart('chartBarras', {
+                            chart: {
+                                type: 'bar'
+                            },
+                            title: {
+                                text: 'Total de Despesas por Categoria'
+                            },
+                            xAxis: {
+                                categories: dadosChartBarrasX
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Valores'
+                                }
+                            },
+                            series: [{
+                                name: 'Dados',
+                                data: dadosChartBarrasY
+                            }]
+                        });
+                    },
+                    error: function (e) { //capturando a resposta de erro
+                        console.log(e);
+                    }
+                });
             }
-        },
-        series: [{
-            name: 'Série 1',
-            data: [10, 20, 30]
-        }]
-    });
-</script>
+            else {
+                alert('Por favor, selecione uma data de início e fim do período')
+            }
+
+        }
+
+        function formatDate(date){
+            var day = String(date.getDate()).padStart(2, '0');
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var year = date.getFullYear();
+            return year + "-" + month + "-" + day;
+        }
+
+    </script>
+
 }
